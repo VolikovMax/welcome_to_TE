@@ -1,15 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 
 import styles from './page.module.css';
 
 import { fetchOnePost } from '@/libs/fetchOnePost';
 
 const ComponentOne = () => {
-    const { data } = useSWR('custom_key_1', fetchOnePost);
-    //...some logic
+    const { data } = useSWR("custom_key_1", fetchOnePost, {
+        onSuccess(data) {
+            mutate("custom_key_2", data, false);
+        },
+    });
 
     return data ? (
         <div className={styles.card}>
@@ -22,9 +25,13 @@ const ComponentOne = () => {
     );
 };
 
+//* Также можно через одинаковый ключ или не трогая первый во втором через useSWRConfig достать из кэша
 const ComponentTwo = () => {
-    const { data } = useSWR('custom_key_2', () => fetchOnePost({ delayMS: 2000 }));
-    //...some logic
+    const { data } = useSWR(
+        "custom_key_2",
+        () => fetchOnePost({ delayMS: 2000 }),
+        { revalidateOnMount: false }
+    );
 
     return data ? (
         <div className={styles.card}>

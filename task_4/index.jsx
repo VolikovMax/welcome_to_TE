@@ -1,48 +1,37 @@
 import { useState } from "react";
 
-export const Block1 = ({ mouseEnterCallbak, imgSrc, imgAlt }) => {
+const MouseEnterWrapper = ({ cb, children }) => {
   const [isActive, setActive] = useState(false);
 
   const mouseEnterHandler = () => {
     setActive(true);
-    mouseEnterCallbak();
+    cb();
   };
 
   return (
     <div onMouseEnter={mouseEnterHandler} className={isActive ? "active" : ""}>
-      <img src={imgSrc} alt={imgAlt} />
+      {children}
     </div>
   );
 };
 
-export const Block2 = ({ mouseEnterCallbak, content }) => {
-  const [isActive, setActive] = useState(false);
+//! Опечатка в пропсах всех Block компонентов. Не стал править для совместимости с песочницей
+export const Block1 = ({ mouseEnterCallbak, imgSrc, imgAlt }) => (
+  <MouseEnterWrapper cb={mouseEnterCallbak}>
+    <img src={imgSrc} alt={imgAlt} />
+  </MouseEnterWrapper>
+);
 
-  const mouseEnterHandler = () => {
-    setActive(true);
-    mouseEnterCallbak();
-  };
+export const Block2 = ({ mouseEnterCallbak, content }) => (
+  <MouseEnterWrapper cb={mouseEnterCallbak}>
+    <p>{content}</p>
+  </MouseEnterWrapper>
+);
 
-  return (
-    <div onMouseEnter={mouseEnterHandler} className={isActive ? "active" : ""}>
-      <p>{content}</p>
-    </div>
-  );
-};
-
-export const Block3 = ({ mouseEnterCallbak, userData }) => {
-  const [isActive, setActive] = useState(false);
-
-  const mouseEnterHandler = () => {
-    setActive(true);
-    mouseEnterCallbak();
-  };
-
-  return (
-    <div onMouseEnter={mouseEnterHandler} className={isActive ? "active" : ""}>
-      <address>
-        country: {userData.country}, street: {userData.street}
-      </address>
-    </div>
-  );
-};
+export const Block3 = ({ mouseEnterCallbak, userData }) => (
+  <MouseEnterWrapper cb={mouseEnterCallbak}>
+    <address>
+      country: {userData.country}, street: {userData.street}
+    </address>
+  </MouseEnterWrapper>
+);

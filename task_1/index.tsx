@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, memo } from 'react';
 
 type IUser = {
     name: string
@@ -9,39 +9,62 @@ type IProps = {
     user: IUser
 }
 
-// functional component
-const FirstComponent = ({ name, age }: IUser) => (
-    <div>
-        my name is {name}, my age is {age}
-    </div>
-);
+const isEqual = (prev: IUser, next: IUser) => {
+  return prev.name === next.name && prev.age === next.age;
+};
 
-// functional component
-// Этот компонент является необязательным для выполнения задания, но продемонстрирует глубину знаний в React.
-const SecondComponent = ({ user: { name, age } }: IProps) => (
-    <div>
-        my name is {name}, my age is {age}
-    </div>
-);
+const isEqualIProps = (prev: IProps, next: IProps) => {
+  return isEqual(prev.user, next.user);
+};
 
-// class component
-class ThirdComponent extends Component<IUser> {
-    render() {
-        return (
-            <div>
-                my name is {this.props.name}, my age is {this.props.age}
-            </div>
-        )
-    }
+export const FirstComponent = memo(({ name, age }: IUser) => {
+  console.log("FirstComponent has been updated");
+
+  return (
+    <div>
+      my name is {name}, my age is {age}
+    </div>
+  );
+}, isEqual);
+
+export const SecondComponent = memo(({ user: { name, age } }: IProps) => {
+  console.log("SecondComponent has been updated");
+
+  return (
+    <div>
+      my name is {name}, my age is {age}
+    </div>
+  );
+}, isEqualIProps);
+
+export class ThirdComponent extends Component<IUser> {
+  shouldComponentUpdate(next) {
+    return !isEqual(this.props, next);
+  }
+
+  render() {
+    console.log("ThirdComponent has been updated");
+
+    return (
+      <div>
+        my name is {this.props.name}, my age is {this.props.age}
+      </div>
+    );
+  }
 }
 
-// class component
-class FourthComponent extends Component<IProps> {
-    render() {
-        return (
-            <div>
-                my name is {this.props.user.name}, my age is {this.props.user.age}
-            </div>
-        )
-    }
+export class FourthComponent extends Component<IProps> {
+  shouldComponentUpdate(next) {
+    return !isEqualIProps(this.props, next);
+  }
+
+  render() {
+    console.log("FourthComponent has been updated");
+
+    return (
+      <div>
+        my name is {this.props.user.name}, my age is {this.props.user.age}
+      </div>
+    );
+  }
 }

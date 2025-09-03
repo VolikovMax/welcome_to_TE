@@ -45,3 +45,23 @@ const BALLONS: { [key: string]: BallonI } = {
 };
 
 // Ваш код здесь
+function getAllPublicBallons() {
+  const publicIds: number[] = [];
+
+  for (const color in BALLONS) {
+    const ballon = BALLONS[color];
+    if (ballon.isPublic) {
+      publicIds.push(ballon.id);
+    }
+  }
+
+  return Promise.all(publicIds.map((id) => fetchBallonAmount(id))).then((res) =>
+    res.reduce((acc, count) => acc + count, 0)
+  );
+}
+
+function check() {
+  getAllPublicBallons().then((res) => console.log(res));
+}
+
+check();
